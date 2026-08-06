@@ -7,37 +7,40 @@
 </head>
 <body>
   <div class="container">
-    <h2>YTR Settings</h2>
+    <h2>YTR Premium</h2>
+    <p class="subtitle">Customize your experience</p>
     
-    <label class="toggle">
-      <span class="toggle-label">Hide Ads</span>
-      <input type="checkbox" id="hideAds" checked>
-      <span class="slider"></span>
-    </label>
+    <div class="toggle-group">
+      <label class="toggle" title="Auto-skips and hides video/display ads">
+        <span class="toggle-label">Hide Ads</span>
+        <input type="checkbox" id="hideAds" checked>
+        <span class="slider"></span>
+      </label>
 
-    <label class="toggle">
-      <span class="toggle-label">Hide Shorts</span>
-      <input type="checkbox" id="hideShorts" checked>
-      <span class="slider"></span>
-    </label>
+      <label class="toggle" title="Removes Shorts from your feeds">
+        <span class="toggle-label">Hide Shorts</span>
+        <input type="checkbox" id="hideShorts" checked>
+        <span class="slider"></span>
+      </label>
 
-    <label class="toggle">
-      <span class="toggle-label">Hide Community Posts</span>
-      <input type="checkbox" id="hidePosts" checked>
-      <span class="slider"></span>
-    </label>
+      <label class="toggle" title="Removes text/image posts from channels">
+        <span class="toggle-label">Hide Community Posts</span>
+        <input type="checkbox" id="hidePosts" checked>
+        <span class="slider"></span>
+      </label>
 
-    <label class="toggle">
-      <span class="toggle-label">Hide Mixes</span>
-      <input type="checkbox" id="hideMixes" checked>
-      <span class="slider"></span>
-    </label>
+      <label class="toggle" title="Removes auto-generated mix playlists">
+        <span class="toggle-label">Hide Mixes</span>
+        <input type="checkbox" id="hideMixes" checked>
+        <span class="slider"></span>
+      </label>
 
-    <label class="toggle">
-      <span class="toggle-label">Force Max Quality</span>
-      <input type="checkbox" id="forceQuality" checked>
-      <span class="slider"></span>
-    </label>
+      <label class="toggle" title="Attempts to force the highest resolution">
+        <span class="toggle-label">Force Max Quality</span>
+        <input type="checkbox" id="forceQuality" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
   </div>
   <script src="popup.js"></script>
 </body>
