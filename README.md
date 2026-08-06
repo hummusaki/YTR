@@ -1,4 +1,4 @@
-# YTR (YouTube Premium Extension for Orion)
+# YTR (YouTube Refreshed extension for Orion)
 
 YTR is a web extension designed primarily for the Orion browser (iOS/macOS) that provides a clean, premium-like YouTube experience.
 
