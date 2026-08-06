@@ -48,8 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
             updateBtn.textContent = `Update to v${latestVersion}`;
             updateBtn.classList.add('update-available');
             
-            // Set up direct download link
-            const downloadUrl = `https://github.com/hummusaki/YTR/releases/latest/download/YTR.zip`;
+            // Set up direct download link dynamically based on the release asset
+            let downloadUrl = `https://github.com/hummusaki/YTR/releases/latest`;
+            if (data.assets && data.assets.length > 0) {
+              downloadUrl = data.assets[0].browser_download_url;
+            }
+            
             updateBtn.addEventListener('click', () => {
               chrome.tabs.create({ url: downloadUrl });
             });
