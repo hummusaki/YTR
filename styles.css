@@ -1,0 +1,54 @@
+/* Hide Ads */
+.ytr-hide-ads ytd-ad-slot-renderer,
+.ytr-hide-ads ytd-banner-promo-renderer,
+.ytr-hide-ads ytd-player-legacy-desktop-watch-ads-renderer,
+.ytr-hide-ads ytm-promoted-video-renderer,
+.ytr-hide-ads .ad-showing,
+.ytr-hide-ads .ad-interrupting,
+.ytr-hide-ads .video-ads,
+.ytr-hide-ads .ytp-ad-module,
+.ytr-hide-ads .ytp-ad-image-overlay,
+.ytr-hide-ads .ytp-ad-overlay-container,
+.ytr-hide-ads .ytm-promoted-video-renderer {
+    display: none !important;
+}
+
+/* Hide Shorts */
+.ytr-hide-shorts ytd-rich-shelf-renderer[is-shorts],
+.ytr-hide-shorts ytm-rich-section-renderer:has(ytm-reel-shelf-renderer),
+.ytr-hide-shorts ytm-pivot-bar-item-renderer:nth-child(2), /* Often the Shorts tab on mobile */
+.ytr-hide-shorts a[title="Shorts"],
+.ytr-hide-shorts a[aria-label="Shorts"],
+.ytr-hide-shorts ytd-reel-shelf-renderer,
+.ytr-hide-shorts ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+.ytr-hide-shorts yt-icon.ytd-shorts-icon,
+.ytr-hide-shorts [is-shorts],
+.ytr-hide-shorts ytm-reel-shelf-renderer {
+    display: none !important;
+}
+
+/* Hide Community Posts */
+.ytr-hide-posts ytd-rich-shelf-renderer[is-post],
+.ytr-hide-posts ytd-post-renderer,
+.ytr-hide-posts ytm-shared-post-renderer,
+.ytr-hide-posts ytm-post-renderer,
+.ytr-hide-posts ytm-rich-section-renderer:has(ytm-post-renderer) {
+    display: none !important;
+}
+
+/* Hide Mixes */
+.ytr-hide-mixes ytd-compact-radio-renderer,
+.ytr-hide-mixes ytd-radio-renderer,
+.ytr-hide-mixes ytm-radio-renderer,
+.ytr-hide-mixes ytd-rich-item-renderer:has(a[href*="start_radio=1"]),
+.ytr-hide-mixes ytd-grid-video-renderer:has(a[href*="start_radio=1"]),
+.ytr-hide-mixes ytm-compact-video-renderer:has(a[href*="start_radio=1"]) {
+    display: none !important;
+}
+
+/* Hide Premium Upsells */
+.ytr-hide-ads ytd-primetime-promo-renderer,
+.ytr-hide-ads ytm-premium-upsell-renderer,
+.ytr-hide-ads .ytd-premium-upsell-renderer {
+    display: none !important;
+}
