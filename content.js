@@ -71,62 +71,52 @@ const injectScript = () => {
 // 3. PiP Button Injection
 const injectPipButton = () => {
     const addBtn = () => {
-        // Desktop controls
-        let controls = document.querySelector('.ytp-right-controls');
-        let isMobile = false;
+        const video = document.querySelector('video');
+        if (!video) return;
+
+        // Try to attach to the player container for absolute positioning relative to the video
+        let container = document.querySelector('.html5-video-player') || document.querySelector('#player-control-overlay') || video.parentElement;
         
-        // Mobile fallback
-        if (!controls) {
-            // Using a generic approach to find mobile player bottom controls
-            controls = document.querySelector('.player-controls-bottom') || document.querySelector('.player-controls-pb');
-            isMobile = true;
-        }
-
-        // If no primary controls, try next to the like button
-        if (!controls) {
-            controls = document.querySelector('ytd-menu-renderer, ytm-menu');
-        }
-
-        if (controls && !document.getElementById('ytr-pip-btn')) {
+        if (container && !document.getElementById('ytr-pip-btn')) {
             const btn = document.createElement('button');
             btn.id = 'ytr-pip-btn';
-            btn.className = isMobile ? 'icon-button' : 'ytp-button';
             btn.title = "Picture-in-Picture";
-            // Simple PiP SVG icon
-            btn.innerHTML = \`<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><path d="M25,17 L17,17 L17,23 L25,23 L25,17 L25,17 Z M29,25 L29,10.98 C29,9.88 28.1,9 27,9 L9,9 C7.9,9 7,9.88 7,10.98 L7,25 C7,26.1 7.9,27 9,27 L27,27 C28.1,27 29,26.1 29,25 L29,25 Z M27,25.02 L9,25.02 L9,10.97 L27,10.97 L27,25.02 L27,25.02 Z" fill="#fff"></path></svg>\`;
             
-            btn.style.width = isMobile ? '40px' : '36px';
-            btn.style.height = '100%';
-            btn.style.verticalAlign = 'top';
-            if (isMobile || controls.tagName === 'YTD-MENU-RENDERER' || controls.tagName === 'YTM-MENU') {
-                btn.style.background = 'none';
-                btn.style.border = 'none';
-                btn.style.padding = '0';
-                btn.style.fill = 'currentColor'; // Adapt to dark/light theme
-                btn.style.marginRight = '8px';
-                btn.style.cursor = 'pointer';
-            }
+            // Floating style
+            Object.assign(btn.style, {
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                zIndex: '999999',
+                background: 'rgba(0, 0, 0, 0.6)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '4px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px'
+            });
+
+            btn.innerHTML = `<svg height="24" version="1.1" viewBox="0 0 36 36" width="24"><path d="M25,17 L17,17 L17,23 L25,23 L25,17 L25,17 Z M29,25 L29,10.98 C29,9.88 28.1,9 27,9 L9,9 C7.9,9 7,9.88 7,10.98 L7,25 C7,26.1 7.9,27 9,27 L27,27 C28.1,27 29,26.1 29,25 L29,25 Z M27,25.02 L9,25.02 L9,10.97 L27,10.97 L27,25.02 L27,25.02 Z" fill="#fff"></path></svg>`;
 
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                const video = document.querySelector('video');
-                if (video) {
+                // Ensure we get the latest video element
+                const currentVideo = document.querySelector('video');
+                if (currentVideo) {
                     if (document.pictureInPictureElement) {
                         document.exitPictureInPicture();
                     } else {
-                        video.requestPictureInPicture();
+                        currentVideo.requestPictureInPicture().catch(err => console.error("PiP Error:", err));
                     }
                 }
             });
 
-            // Insert before fullscreen if on desktop, or prepend
-            const fsBtn = document.querySelector('.ytp-fullscreen-button');
-            if (fsBtn) {
-                controls.insertBefore(btn, fsBtn);
-            } else {
-                controls.insertBefore(btn, controls.firstChild);
-            }
+            container.appendChild(btn);
         }
     };
 
