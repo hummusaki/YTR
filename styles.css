@@ -2,14 +2,27 @@
 .ytr-hide-ads ytd-ad-slot-renderer,
 .ytr-hide-ads ytd-banner-promo-renderer,
 .ytr-hide-ads ytd-player-legacy-desktop-watch-ads-renderer,
+.ytr-hide-ads ytd-promoted-video-renderer,
+.ytr-hide-ads ytd-promoted-sparkles-web-renderer,
+.ytr-hide-ads ytd-in-feed-ad-layout-renderer,
+.ytr-hide-ads ytd-action-companion-ad-renderer,
 .ytr-hide-ads ytm-promoted-video-renderer,
+.ytr-hide-ads #masthead-ad,
+.ytr-hide-ads #player-ads,
 .ytr-hide-ads .ad-showing,
 .ytr-hide-ads .ad-interrupting,
 .ytr-hide-ads .video-ads,
 .ytr-hide-ads .ytp-ad-module,
 .ytr-hide-ads .ytp-ad-image-overlay,
 .ytr-hide-ads .ytp-ad-overlay-container,
-.ytr-hide-ads .ytm-promoted-video-renderer {
+.ytr-hide-ads .ytm-promoted-video-renderer,
+.ytr-hide-ads ytd-rich-item-renderer:has(ytd-ad-slot-renderer),
+.ytr-hide-ads ytd-rich-item-renderer:has(ytd-promoted-sparkles-web-renderer),
+.ytr-hide-ads ytd-rich-item-renderer:has(ytd-in-feed-ad-layout-renderer),
+.ytr-hide-ads ytd-rich-item-renderer:has(ytd-promoted-video-renderer),
+.ytr-hide-ads ytd-rich-section-renderer:has(ytd-ad-slot-renderer),
+.ytr-hide-ads ytd-item-section-renderer:has(ytd-ad-slot-renderer),
+.ytr-hide-ads ytd-item-section-renderer:has(ytd-promoted-sparkles-web-renderer) {
     display: none !important;
 }
 
