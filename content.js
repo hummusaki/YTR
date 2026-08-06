@@ -73,9 +73,10 @@ const injectPipButton = () => {
     const addBtn = () => {
         const video = document.querySelector('video');
         const btn = document.getElementById('ytr-pip-btn');
+        const isWatchPage = window.location.pathname.startsWith('/watch');
         
-        // Hide button if no video is present on screen
-        if (!video || video.offsetWidth === 0) {
+        // Hide button if no video is present on screen or not on the watch page
+        if (!video || video.offsetWidth === 0 || !isWatchPage) {
             if (btn) btn.style.display = 'none';
             return;
         }
