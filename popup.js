@@ -32,4 +32,38 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
+
+  // Auto-update checker
+  const updateBtn = document.getElementById('updateBtn');
+  if (updateBtn) {
+    const currentVersion = chrome.runtime.getManifest().version;
+    updateBtn.textContent = 'Checking for updates...';
+    
+    fetch('https://api.github.com/repos/hummusaki/YTR/releases/latest')
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.tag_name) {
+          const latestVersion = data.tag_name.replace('v', '');
+          if (latestVersion !== currentVersion) {
+            updateBtn.textContent = `Update to v${latestVersion}`;
+            updateBtn.classList.add('update-available');
+            
+            // Set up direct download link
+            const downloadUrl = `https://github.com/hummusaki/YTR/releases/latest/download/YTR.zip`;
+            updateBtn.addEventListener('click', () => {
+              chrome.tabs.create({ url: downloadUrl });
+            });
+          } else {
+            updateBtn.textContent = 'Up to Date ✓';
+            updateBtn.style.cursor = 'default';
+            updateBtn.style.opacity = '0.7';
+            updateBtn.addEventListener('click', (e) => e.preventDefault());
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Update check failed:', err);
+        updateBtn.textContent = 'Update check failed';
+      });
+  }
 });
