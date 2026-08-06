@@ -68,49 +68,51 @@ const injectScript = () => {
     script.remove();
 };
 
-// 3. PiP Button Injection
+// 3. PiP Button Injection (Floating Action Button)
 const injectPipButton = () => {
     const addBtn = () => {
         const video = document.querySelector('video');
-        if (!video) return;
-
-        // Try to attach to the player container for absolute positioning relative to the video
-        let container = document.querySelector('.html5-video-player') || document.querySelector('#player-control-overlay') || video.parentElement;
+        const btn = document.getElementById('ytr-pip-btn');
         
-        if (container && !document.getElementById('ytr-pip-btn')) {
-            const btn = document.createElement('button');
-            btn.id = 'ytr-pip-btn';
-            btn.title = "Picture-in-Picture";
+        // Hide button if no video is present on screen
+        if (!video || video.offsetWidth === 0) {
+            if (btn) btn.style.display = 'none';
+            return;
+        }
+
+        if (!btn) {
+            const newBtn = document.createElement('button');
+            newBtn.id = 'ytr-pip-btn';
+            newBtn.title = "Picture-in-Picture";
             
-            // Floating style
-            Object.assign(btn.style, {
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
+            // FAB style (Fixed position, bottom right)
+            Object.assign(newBtn.style, {
+                position: 'fixed',
+                bottom: '24px',
+                right: '24px',
                 zIndex: '2147483647', // Maximum z-index
-                background: 'rgba(0, 0, 0, 0.6)',
+                background: 'rgba(255, 0, 51, 0.95)', // YouTube Red
                 border: 'none',
-                borderRadius: '8px',
-                padding: '4px',
+                borderRadius: '50%',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                padding: '12px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '40px',
-                height: '40px',
-                pointerEvents: 'auto'
+                width: '56px',
+                height: '56px',
+                pointerEvents: 'auto',
+                backdropFilter: 'blur(4px)'
             });
 
-            btn.innerHTML = `<svg height="24" version="1.1" viewBox="0 0 36 36" width="24"><path d="M25,17 L17,17 L17,23 L25,23 L25,17 L25,17 Z M29,25 L29,10.98 C29,9.88 28.1,9 27,9 L9,9 C7.9,9 7,9.88 7,10.98 L7,25 C7,26.1 7.9,27 9,27 L27,27 C28.1,27 29,26.1 29,25 L29,25 Z M27,25.02 L9,25.02 L9,10.97 L27,10.97 L27,25.02 L27,25.02 Z" fill="#fff"></path></svg>`;
-
-            const blockEvent = (e) => {
-                e.stopPropagation();
-            };
+            newBtn.innerHTML = `<svg height="28" version="1.1" viewBox="0 0 36 36" width="28"><path d="M25,17 L17,17 L17,23 L25,23 L25,17 L25,17 Z M29,25 L29,10.98 C29,9.88 28.1,9 27,9 L9,9 C7.9,9 7,9.88 7,10.98 L7,25 C7,26.1 7.9,27 9,27 L27,27 C28.1,27 29,26.1 29,25 L29,25 Z M27,25.02 L9,25.02 L9,10.97 L27,10.97 L27,25.02 L27,25.02 Z" fill="#fff"></path></svg>`;
 
             const handleClick = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                // Ensure we get the latest video element
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
                 const currentVideo = document.querySelector('video');
                 if (currentVideo) {
                     if (document.pictureInPictureElement) {
@@ -121,18 +123,18 @@ const injectPipButton = () => {
                 }
             };
 
-            // Catch the click for PiP
-            btn.addEventListener('click', handleClick);
+            // Catch the click for desktop/standard
+            newBtn.addEventListener('click', handleClick);
             
-            // Stop touch and pointer events from bubbling up to YouTube's overlay
-            btn.addEventListener('touchstart', blockEvent, { passive: false });
-            btn.addEventListener('touchend', blockEvent, { passive: false });
-            btn.addEventListener('mousedown', blockEvent);
-            btn.addEventListener('mouseup', blockEvent);
-            btn.addEventListener('pointerdown', blockEvent);
-            btn.addEventListener('pointerup', blockEvent);
+            // Catch touchend directly for iOS to ensure it triggers before anything else
+            newBtn.addEventListener('touchend', (e) => {
+                handleClick(e);
+            }, { passive: false });
 
-            container.appendChild(btn);
+            // Append to body, completely escaping the player's DOM
+            document.body.appendChild(newBtn);
+        } else {
+            btn.style.display = 'flex';
         }
     };
 
