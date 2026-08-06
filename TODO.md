@@ -6,3 +6,5 @@
     - Add separate setting for already viewed (aka not fully watched)
 
 - Add the ability to hide auto-generated playlists from feed
+
+- Fix the icon
