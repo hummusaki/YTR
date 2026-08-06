@@ -87,7 +87,7 @@ const injectPipButton = () => {
                 position: 'absolute',
                 top: '10px',
                 right: '10px',
-                zIndex: '999999',
+                zIndex: '2147483647', // Maximum z-index
                 background: 'rgba(0, 0, 0, 0.6)',
                 border: 'none',
                 borderRadius: '8px',
@@ -97,12 +97,17 @@ const injectPipButton = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 width: '40px',
-                height: '40px'
+                height: '40px',
+                pointerEvents: 'auto'
             });
 
             btn.innerHTML = `<svg height="24" version="1.1" viewBox="0 0 36 36" width="24"><path d="M25,17 L17,17 L17,23 L25,23 L25,17 L25,17 Z M29,25 L29,10.98 C29,9.88 28.1,9 27,9 L9,9 C7.9,9 7,9.88 7,10.98 L7,25 C7,26.1 7.9,27 9,27 L27,27 C28.1,27 29,26.1 29,25 L29,25 Z M27,25.02 L9,25.02 L9,10.97 L27,10.97 L27,25.02 L27,25.02 Z" fill="#fff"></path></svg>`;
 
-            btn.addEventListener('click', (e) => {
+            const blockEvent = (e) => {
+                e.stopPropagation();
+            };
+
+            const handleClick = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 // Ensure we get the latest video element
@@ -114,7 +119,18 @@ const injectPipButton = () => {
                         currentVideo.requestPictureInPicture().catch(err => console.error("PiP Error:", err));
                     }
                 }
-            });
+            };
+
+            // Catch the click for PiP
+            btn.addEventListener('click', handleClick);
+            
+            // Stop touch and pointer events from bubbling up to YouTube's overlay
+            btn.addEventListener('touchstart', blockEvent, { passive: false });
+            btn.addEventListener('touchend', blockEvent, { passive: false });
+            btn.addEventListener('mousedown', blockEvent);
+            btn.addEventListener('mouseup', blockEvent);
+            btn.addEventListener('pointerdown', blockEvent);
+            btn.addEventListener('pointerup', blockEvent);
 
             container.appendChild(btn);
         }
