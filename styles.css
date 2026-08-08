@@ -9,8 +9,6 @@
 .ytr-hide-ads ytm-promoted-video-renderer,
 .ytr-hide-ads #masthead-ad,
 .ytr-hide-ads #player-ads,
-.ytr-hide-ads .ad-showing,
-.ytr-hide-ads .ad-interrupting,
 .ytr-hide-ads .video-ads,
 .ytr-hide-ads .ytp-ad-module,
 .ytr-hide-ads .ytp-ad-image-overlay,
@@ -29,7 +27,7 @@
 /* Hide Shorts */
 .ytr-hide-shorts ytd-rich-shelf-renderer[is-shorts],
 .ytr-hide-shorts ytm-rich-section-renderer:has(ytm-reel-shelf-renderer),
-.ytr-hide-shorts ytm-pivot-bar-item-renderer:nth-child(2), /* Often the Shorts tab on mobile */
+.ytr-hide-shorts ytm-pivot-bar-item-renderer:has(.pivot-shorts), /* Shorts tab on mobile */
 .ytr-hide-shorts a[title="Shorts"],
 .ytr-hide-shorts a[aria-label="Shorts"],
 .ytr-hide-shorts ytd-reel-shelf-renderer,
