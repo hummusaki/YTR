@@ -27,7 +27,15 @@
 /* Hide Shorts */
 .ytr-hide-shorts ytd-rich-shelf-renderer[is-shorts],
 .ytr-hide-shorts ytm-rich-section-renderer:has(ytm-reel-shelf-renderer),
-.ytr-hide-shorts ytm-pivot-bar-item-renderer:has(.pivot-shorts), /* Shorts tab on mobile */
+.ytr-hide-shorts ytm-pivot-bar-item-renderer:has(.pivot-shorts),
+.ytr-hide-shorts ytm-pivot-bar-item-renderer:has([title*="Shorts"]),
+.ytr-hide-shorts ytm-pivot-bar-item-renderer:has([aria-label*="Shorts"]),
+.ytr-hide-shorts ytm-pivot-bar-item-renderer:has(a[href^="/shorts"]),
+.ytr-hide-shorts grid-shelf-view-model:has(ytm-shorts-lockup-view-model),
+.ytr-hide-shorts grid-shelf-view-model:has(ytm-shorts-lockup-view-model-v2),
+.ytr-hide-shorts ytm-video-with-context-renderer:has(ytm-thumbnail-overlay-time-status-renderer[data-style="SHORTS"]),
+.ytr-hide-shorts yt-horizontal-list-renderer:has(ytm-shorts-lockup-view-model),
+.ytr-hide-shorts yt-horizontal-list-renderer:has(ytm-shorts-lockup-view-model-v2),
 .ytr-hide-shorts a[title="Shorts"],
 .ytr-hide-shorts a[aria-label="Shorts"],
 .ytr-hide-shorts ytd-reel-shelf-renderer,
