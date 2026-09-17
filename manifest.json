@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YTR",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A cleaner, premium YouTube experience without ads, shorts, or community posts.",
   "icons": {
     "48": "icons/icon-48.png",
@@ -20,13 +20,34 @@
   ],
   "content_scripts": [
     {
-      "matches": ["*://*.youtube.com/*"],
-      "css": ["styles.css"],
-      "js": ["content.js"],
+      "matches": [
+        "*://*.youtube.com/*"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "js": [
+        "content.js",
+        "playback.js"
+      ],
       "run_at": "document_start"
     }
   ],
   "host_permissions": [
-    "*://*.youtube.com/*"
-  ]
+    "*://*.youtube.com/*",
+    "https://sponsor.ajay.app/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "player.js"
+      ],
+      "matches": [
+        "*://*.youtube.com/*"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
 }

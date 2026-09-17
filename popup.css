@@ -185,3 +185,14 @@ input:focus-visible + .slider {
   70% { box-shadow: 0 0 0 6px rgba(255, 0, 51, 0); }
   100% { box-shadow: 0 0 0 0 rgba(255, 0, 51, 0); }
 }
+
+.select-setting { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.select-setting select { padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-color); color: var(--text-primary); font: inherit; }
+.setting-help { margin: -4px 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+.sleep-settings { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--border); }
+.sleep-settings h3 { font-size: 14px; margin: 0 0 12px; }
+.sleep-settings input { padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-color); color: var(--text-primary); font: inherit; }
+.sleep-actions { display: flex; gap: 8px; margin: 12px 0; }
+.sleep-settings .setting-help { margin-top: 8px; }
+.update-btn:disabled { opacity: .5; cursor: default; }
+.setting-help a { color: inherit; }

@@ -38,18 +38,58 @@
         <span class="slider"></span>
       </label>
 
-      <label class="toggle" title="Attempts to force the highest resolution">
-        <span class="toggle-label">Force Max Quality</span>
-        <input type="checkbox" id="forceQuality" checked>
+      <label class="select-setting" for="videoQuality">
+        <span>Video quality</span>
+        <select id="videoQuality">
+          <option value="auto">Auto (YouTube default)</option>
+          <option value="highest">Highest available</option>
+          <option value="highres">4320p (8K)</option>
+          <option value="hd2160">2160p (4K)</option>
+          <option value="hd1440">1440p</option>
+          <option value="hd1080">1080p</option>
+          <option value="hd720">720p</option>
+          <option value="large">480p</option>
+          <option value="medium">360p</option>
+          <option value="small">240p</option>
+          <option value="tiny">144p</option>
+        </select>
+      </label>
+      <p class="setting-help">Uses the nearest lower quality when your choice is unavailable. YouTube may override this preference.</p>
+      <label class="select-setting" for="pipPlacement">
+        <span>Picture-in-Picture button</span>
+        <select id="pipPlacement">
+          <option value="player">Inside player</option>
+          <option value="floating">Floating</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </label>
+      <label class="toggle" title="Automatically skip crowdsourced sponsor segments">
+        <span class="toggle-label">SponsorBlock</span>
+        <input type="checkbox" id="sponsorBlock">
         <span class="slider"></span>
       </label>
+      <p class="setting-help">Skips sponsor segments only. When enabled, contacts SponsorBlock using a partial video hash. <a href="https://sponsor.ajay.app/" target="_blank" rel="noopener noreferrer">About SponsorBlock</a></p>
     </div>
+
+    <section class="sleep-settings" aria-labelledby="sleep-heading">
+      <h3 id="sleep-heading">Sleep timer</h3>
+      <label class="select-setting" for="sleepMinutes">Minutes (1–480)
+        <input id="sleepMinutes" type="number" min="1" max="480" step="1" value="30">
+      </label>
+      <div class="sleep-actions">
+        <button id="sleepStart" class="update-btn">Start timer</button>
+        <button id="sleepCancel" class="update-btn">Cancel</button>
+      </div>
+      <p id="sleepStatus" class="setting-help" role="status" aria-live="polite">Open a YouTube tab to set a timer.</p>
+      <p class="setting-help">Applies to this tab, including the next video. If your browser suspends the tab, playback pauses when it resumes.</p>
+    </section>
 
     <div class="update-container">
       <button id="updateBtn" class="update-btn">Check for Updates</button>
     </div>
   </div>
   <script src="popup.js"></script>
+  <script src="sleep-popup.js"></script>
 </body>
 
 </html>

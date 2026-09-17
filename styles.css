@@ -49,19 +49,27 @@
 /* Hide Community Posts */
 .ytr-hide-posts ytd-rich-shelf-renderer[is-post],
 .ytr-hide-posts ytd-post-renderer,
+.ytr-hide-posts ytd-backstage-post-renderer,
+.ytr-hide-posts ytd-backstage-post-thread-renderer,
+.ytr-hide-posts ytd-shared-post-renderer,
+.ytr-hide-posts ytm-backstage-post-renderer,
+.ytr-hide-posts ytm-backstage-post-thread-renderer,
+.ytr-hide-posts ytd-rich-item-renderer:has(ytd-backstage-post-thread-renderer, ytd-post-renderer, ytd-shared-post-renderer),
+.ytr-hide-posts ytm-rich-item-renderer:has(ytm-post-renderer, ytm-shared-post-renderer, ytm-backstage-post-thread-renderer),
 .ytr-hide-posts ytm-shared-post-renderer,
 .ytr-hide-posts ytm-post-renderer,
 .ytr-hide-posts ytm-rich-section-renderer:has(ytm-post-renderer) {
     display: none !important;
 }
 
-/* Hide Mixes */
+/* Hide Mixes only when the card itself is a radio playlist. Ordinary video
+   cards can also contain a start-radio action in their menus. */
 .ytr-hide-mixes ytd-compact-radio-renderer,
 .ytr-hide-mixes ytd-radio-renderer,
 .ytr-hide-mixes ytm-radio-renderer,
-.ytr-hide-mixes ytd-rich-item-renderer:has(a[href*="start_radio=1"]),
-.ytr-hide-mixes ytd-grid-video-renderer:has(a[href*="start_radio=1"]),
-.ytr-hide-mixes ytm-compact-video-renderer:has(a[href*="start_radio=1"]) {
+.ytr-hide-mixes :is(ytd-rich-item-renderer, ytd-grid-video-renderer, ytd-compact-video-renderer, ytd-video-renderer, yt-lockup-view-model, ytm-compact-video-renderer, ytm-video-with-context-renderer):has(
+    :is(a#thumbnail, a#video-title, a#video-title-link, a.yt-lockup-view-model__content-image, a.yt-lockup-metadata-view-model__title, a.media-item-thumbnail-container, a.compact-media-item-image):is([href*="?list=RD"], [href*="&list=RD"])
+) {
     display: none !important;
 }
 
@@ -71,3 +79,14 @@
 .ytr-hide-ads .ytd-premium-upsell-renderer {
     display: none !important;
 }
+
+/* Neutral PiP styling, with a player overlay when native controls are unavailable. */
+#ytr-pip-btn { box-sizing: border-box; color: white; cursor: pointer; border: 0; display: inline-flex; align-items: center; justify-content: center; padding: 0; pointer-events: auto; flex-shrink: 0; }
+#ytr-pip-btn svg { display: block; width: 36px; height: 36px; flex-shrink: 0; }
+#ytr-pip-btn.ytr-pip-control { background: transparent; width: 48px; min-width: 48px; height: 100%; }
+#ytr-pip-btn.ytr-pip-floating, #ytr-pip-btn.ytr-pip-overlay { background: rgba(32,32,32,.8); border-radius: 8px; width: 44px; height: 44px; z-index: 60; }
+#ytr-pip-btn.ytr-pip-floating { position: fixed; right: 24px; bottom: 24px; z-index: 2147483647; }
+#ytr-pip-btn.ytr-pip-overlay { position: absolute; right: 12px; top: 12px; }
+#ytr-pip-btn:focus-visible { outline: 2px solid white; outline-offset: -3px; }
+/* Anchor the mobile fallback even when its container has no positioning. */
+:where(div):has(> #ytr-pip-btn.ytr-pip-overlay) { position: relative; }

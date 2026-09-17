@@ -3,7 +3,9 @@ let currentSettings = {
     hideShorts: true,
     hidePosts: true,
     hideMixes: true,
-    forceQuality: true
+    forceQuality: true,
+    videoQuality: null,
+    pipPlacement: "player"
 };
 
 const applyBodyClasses = () => {
@@ -35,143 +37,82 @@ const initObserver = () => {
     observer.observe(document.body, { childList: true, subtree: true });
 };
 
-// 2. Inject script for player API access (to force quality)
+// Player APIs belong to the page world; keep the bridge in a packaged script.
+const sendQuality = () => window.postMessage({
+    action: 'ytr-update-quality',
+    quality: currentSettings.videoQuality ?? (currentSettings.forceQuality === false ? 'auto' : 'highest')
+}, window.location.origin);
+
 const injectScript = () => {
     const script = document.createElement('script');
-    script.textContent = `
-        window.ytrForceQuality = true;
-        
-        window.addEventListener('message', (e) => {
-            if (e.data && e.data.action === 'ytr-update-settings') {
-                window.ytrForceQuality = e.data.settings.forceQuality;
-            }
-        });
-
-        const enforceQuality = () => {
-            if (!window.ytrForceQuality) return;
-            const player = document.getElementById('movie_player') || document.querySelector('.html5-video-player');
-            if (player && typeof player.getAvailableQualityLevels === 'function') {
-                const levels = player.getAvailableQualityLevels();
-                if (levels && levels.length > 0) {
-                    const best = levels[0]; 
-                    if (player.getPlaybackQuality() !== best) {
-                        player.setPlaybackQualityRange(best, best);
-                    }
-                }
-            }
-        };
-
-        window.addEventListener('yt-navigate-finish', enforceQuality);
-        setInterval(enforceQuality, 2000);
-    `;
+    script.src = chrome.runtime.getURL('player.js');
+    script.onload = () => { sendQuality(); script.remove(); };
     (document.head || document.documentElement).appendChild(script);
-    script.remove();
 };
 
-// 3. PiP Button Injection (Floating Action Button)
-const injectPipButton = () => {
-    const addBtn = () => {
-        const video = document.querySelector('video');
-        const btn = document.getElementById('ytr-pip-btn');
-        const isWatchPage = window.location.pathname.startsWith('/watch');
-        
-        // Hide button if no video is present on screen or not on the watch page
-        if (!video || video.offsetWidth === 0 || !isWatchPage) {
-            if (btn) btn.style.display = 'none';
-            return;
-        }
-
-        if (!btn) {
-            const newBtn = document.createElement('button');
-            newBtn.id = 'ytr-pip-btn';
-            newBtn.title = "Picture-in-Picture";
-            
-            // FAB style (Fixed position, bottom right)
-            Object.assign(newBtn.style, {
-                position: 'fixed',
-                bottom: '24px',
-                right: '24px',
-                zIndex: '2147483647', // Maximum z-index
-                background: 'rgba(255, 0, 51, 0.95)', // YouTube Red
-                border: 'none',
-                borderRadius: '50%',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-                padding: '12px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '56px',
-                height: '56px',
-                pointerEvents: 'auto',
-                backdropFilter: 'blur(4px)'
-            });
-
-            newBtn.innerHTML = `<svg height="28" version="1.1" viewBox="0 0 36 36" width="28"><path d="M25,17 L17,17 L17,23 L25,23 L25,17 L25,17 Z M29,25 L29,10.98 C29,9.88 28.1,9 27,9 L9,9 C7.9,9 7,9.88 7,10.98 L7,25 C7,26.1 7.9,27 9,27 L27,27 C28.1,27 29,26.1 29,25 L29,25 Z M27,25.02 L9,25.02 L9,10.97 L27,10.97 L27,25.02 L27,25.02 Z" fill="#fff"></path></svg>`;
-
-            const handleClick = (e) => {
-                if (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                const currentVideo = document.querySelector('video');
-                if (currentVideo) {
-                    if (document.pictureInPictureElement) {
-                        document.exitPictureInPicture();
-                    } else {
-                        currentVideo.requestPictureInPicture().catch(err => console.error("PiP Error:", err));
-                    }
-                }
-            };
-
-            // Catch the click for desktop/standard
-            newBtn.addEventListener('click', handleClick);
-            
-            // Catch touchend directly for iOS to ensure it triggers before anything else
-            newBtn.addEventListener('touchend', (e) => {
-                handleClick(e);
-            }, { passive: false });
-
-            // Append to body, completely escaping the player's DOM
-            document.body.appendChild(newBtn);
-        } else {
-            btn.style.display = 'flex';
-        }
-    };
-
-    window.addEventListener('yt-navigate-finish', () => setTimeout(addBtn, 1000));
-    setInterval(addBtn, 2000);
-    setTimeout(addBtn, 1000);
-};
-
-// Initialize
-const initialize = () => {
-    applyBodyClasses();
-    initObserver();
-    injectScript();
-    injectPipButton();
-
-    // Load initial settings
-    if (typeof chrome !== 'undefined' && chrome.storage) {
-        chrome.storage.sync.get(currentSettings, (settings) => {
-            currentSettings = { ...currentSettings, ...settings };
-            applyBodyClasses();
-            window.postMessage({ action: 'ytr-update-settings', settings: currentSettings }, '*');
-        });
-
-        // Listen for live updates
-        chrome.runtime.onMessage.addListener((request) => {
-            if (request.action === "updateSettings") {
-                currentSettings = { ...currentSettings, ...request.settings };
-                applyBodyClasses();
-                window.postMessage({ action: 'ytr-update-settings', settings: currentSettings }, '*');
+const updatePipButton = () => {
+    const video = document.querySelector('video');
+    let button = document.getElementById('ytr-pip-btn');
+    const supported = video && ((document.pictureInPictureEnabled && typeof video.requestPictureInPicture === 'function') ||
+        (typeof video.webkitSupportsPresentationMode === 'function' && video.webkitSupportsPresentationMode('picture-in-picture')));
+    if (currentSettings.pipPlacement === 'hidden' || !supported || !video.offsetWidth || window.location.pathname !== '/watch') {
+        if (button) button.remove();
+        return;
+    }
+    const player = video.closest('.html5-video-player, #movie_player, #player-container-id') || video.parentElement;
+    const controls = player.querySelector('.ytp-right-controls');
+    const floating = currentSettings.pipPlacement === 'floating';
+    const target = floating ? document.body : (controls || player);
+    if (!button) {
+        button = document.createElement('button');
+        button.id = 'ytr-pip-btn';
+        button.type = 'button';
+        button.title = 'Picture-in-Picture';
+        button.setAttribute('aria-label', 'Picture-in-Picture');
+        button.innerHTML = '<svg aria-hidden="true" viewBox="0 0 36 36" width="28" height="28"><path d="M25 17h-8v6h8zM29 25V11a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2zM27 25H9V11h18z" fill="currentColor"/></svg>';
+        button.addEventListener('click', async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const currentVideo = document.querySelector('video');
+            if (!currentVideo) return;
+            try {
+                if (document.pictureInPictureElement) await document.exitPictureInPicture();
+                else if (document.pictureInPictureEnabled && currentVideo.requestPictureInPicture) await currentVideo.requestPictureInPicture();
+                else if (currentVideo.webkitSetPresentationMode) currentVideo.webkitSetPresentationMode(
+                    currentVideo.webkitPresentationMode === 'picture-in-picture' ? 'inline' : 'picture-in-picture');
+            } catch (error) {
+                console.error('YTR PiP:', error);
             }
         });
     }
+    button.className = floating ? 'ytr-pip-floating' : controls ? 'ytp-button ytr-pip-control' : 'ytr-pip-overlay';
+    if (button.parentElement !== target) target.appendChild(button);
 };
 
-if (document.body) {
-    initialize();
-} else {
-    document.addEventListener('DOMContentLoaded', initialize);
-}
+const refreshSettings = () => {
+    applyBodyClasses();
+    sendQuality();
+    updatePipButton();
+};
+
+const initialize = () => {
+    initObserver();
+    injectScript();
+    chrome.storage.sync.get(currentSettings, (settings) => {
+        currentSettings = { ...currentSettings, ...settings };
+        refreshSettings();
+    });
+    // Storage events update all open YouTube tabs, including from the options page.
+    chrome.storage.onChanged.addListener((changes, area) => {
+        if (area !== 'sync') return;
+        for (const [key, change] of Object.entries(changes)) {
+            if (key in currentSettings) currentSettings[key] = change.newValue;
+        }
+        refreshSettings();
+    });
+    window.addEventListener('yt-navigate-finish', updatePipButton);
+    setInterval(updatePipButton, 2000);
+};
+
+if (document.body) initialize();
+else document.addEventListener('DOMContentLoaded', initialize, { once: true });

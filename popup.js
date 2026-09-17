@@ -3,33 +3,31 @@ const defaultSettings = {
   hideShorts: true,
   hidePosts: true,
   hideMixes: true,
-  forceQuality: true
+  forceQuality: true,
+  videoQuality: null,
+  pipPlacement: "player",
+  sponsorBlock: false
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  const controls = document.querySelectorAll('.toggle-group input[type="checkbox"], .toggle-group select');
 
   // Load settings
   chrome.storage.sync.get(defaultSettings, (settings) => {
-    checkboxes.forEach((cb) => {
+    settings.videoQuality ??= settings.forceQuality === false ? "auto" : "highest";
+    controls.forEach((cb) => {
       if (settings[cb.id] !== undefined) {
-        cb.checked = settings[cb.id];
+        if (cb.type === "checkbox") cb.checked = settings[cb.id];
+        else cb.value = settings[cb.id];
       }
     });
   });
 
   // Save settings on change
-  checkboxes.forEach((cb) => {
+  controls.forEach((cb) => {
     cb.addEventListener('change', (e) => {
-      const setting = { [e.target.id]: e.target.checked };
-      chrome.storage.sync.set(setting, () => {
-        // Send message to active tab to update immediately
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-          if (tabs[0]) {
-            chrome.tabs.sendMessage(tabs[0].id, {action: "updateSettings", settings: setting});
-          }
-        });
-      });
+      const setting = { [e.target.id]: e.target.type === "checkbox" ? e.target.checked : e.target.value };
+      chrome.storage.sync.set(setting);
     });
   });
 
